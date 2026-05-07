@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SPR_411_Team_1.DAL.Data;
-using SPR_411_Team_1.API.Initializer;
+using SPR_411_Team_1.DAL.Initialization;
 
 var builder = WebApplication.CreateBuilder(args);
 

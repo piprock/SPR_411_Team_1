@@ -4,7 +4,7 @@ using SPR_411_Team_1.DAL.Data;
 using SPR_411_Team_1.DAL.Data.Entities;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SPR_411_Team_1.API.Initializer;
+namespace SPR_411_Team_1.DAL.Initialization;
 
 public static class Seeder
 {
