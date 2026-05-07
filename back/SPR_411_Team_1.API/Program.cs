@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SPR_411_Team_1.DAL.Data;
+using SPR_411_Team_1.API.Initializer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,5 +31,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await app.SeedAsync();
 
 app.Run();
