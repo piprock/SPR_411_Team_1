@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SPR_411_Team_1.DAL.Data.Entities
 {
-    public class Album
+    public class Album : IBaseEntity
     {
         public int Id { get; set; }
         public string Title { get; set; } = null!;
