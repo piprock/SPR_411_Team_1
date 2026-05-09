@@ -4,9 +4,8 @@ using System.Text;
 
 namespace SPR_411_Team_1.DAL.Data.Entities
 {
-    public class Artist
+    public class Artist : BaseEntity
     {
-        public int Id { get; set; }
         public string Name { get; set; } = null!;
         public string? Bio { get; set; }
         public string? ImageUrl { get; set; }
