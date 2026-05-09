@@ -4,4 +4,9 @@ namespace SPR_411_Team_1.DAL.Data.Entities
     {
         int Id { get; set; }
     }
+
+    public class BaseEntity : IBaseEntity
+    {
+        public int Id { get; set; }
+    }
 }
