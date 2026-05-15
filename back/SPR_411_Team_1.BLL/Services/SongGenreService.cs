@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SPR_411_Team_1.BLL.Models;
 using SPR_411_Team_1.DAL.Data.Entities;
 using SPR_411_Team_1.DAL.Repositories;
 
@@ -22,7 +23,7 @@ namespace SPR_411_Team_1.BLL.Services
 
         public async Task<ServiceResponse> GetAllAsync()
         {
-            var entities = await _songGenreRepository.SongGenres
+            var entities = await GetSongGenreDtos()
                 .ToListAsync();
 
             return ServiceResponse.Success("Список зв'язків пісень і жанрів отримано", entities);
@@ -52,7 +53,16 @@ namespace SPR_411_Team_1.BLL.Services
                 return ServiceResponse.Error("Не вдалося додати зв'язок пісні і жанру");
             }
 
-            return ServiceResponse.Success("Зв'язок пісні і жанру успішно доданий", entity);
+            var created = await GetSongGenreDtos()
+                .FirstOrDefaultAsync(sg => sg.SongId == entity.SongId && sg.GenreId == entity.GenreId);
+
+            return ServiceResponse.Success(
+                "Зв'язок пісні і жанру успішно доданий",
+                created ?? new SongGenreDto
+                {
+                    SongId = entity.SongId,
+                    GenreId = entity.GenreId
+                });
         }
 
         public async Task<ServiceResponse> DeleteAsync(int songId, int genreId)
@@ -72,6 +82,28 @@ namespace SPR_411_Team_1.BLL.Services
             }
 
             return ServiceResponse.Success("Зв'язок пісні і жанру успішно видалений");
+        }
+
+        private IQueryable<SongGenreDto> GetSongGenreDtos()
+        {
+            return _songGenreRepository.SongGenres.Select(sg => new SongGenreDto
+            {
+                SongId = sg.SongId,
+                GenreId = sg.GenreId,
+                Song = new SongBriefDto
+                {
+                    Id = sg.Song.Id,
+                    Title = sg.Song.Title,
+                    ArtistId = sg.Song.ArtistId,
+                    AlbumId = sg.Song.AlbumId,
+                    Duration = sg.Song.Duration
+                },
+                Genre = new GenreDto
+                {
+                    Id = sg.Genre.Id,
+                    Name = sg.Genre.Name
+                }
+            });
         }
     }
 }

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SPR_411_Team_1.BLL.Models;
 using SPR_411_Team_1.DAL.Data.Entities;
 using SPR_411_Team_1.DAL.Repositories;
 
@@ -28,7 +29,7 @@ namespace SPR_411_Team_1.BLL.Services
 
         public async Task<ServiceResponse> GetAllAsync()
         {
-            var entities = await _songRepository.Songs
+            var entities = await GetSongDtos()
                 .ToListAsync();
 
             return ServiceResponse.Success("Список пісень отримано", entities);
@@ -36,7 +37,8 @@ namespace SPR_411_Team_1.BLL.Services
 
         public async Task<ServiceResponse> GetByIdAsync(int id)
         {
-            var entity = await _songRepository.GetSongByIdAsync(id);
+            var entity = await GetSongDtos()
+                .FirstOrDefaultAsync(s => s.Id == id);
 
             if (entity == null)
             {
@@ -81,8 +83,21 @@ namespace SPR_411_Team_1.BLL.Services
                 await _songGenreRepository.CreateRangeAsync(songGenres);
             }
 
-            var created = await _songRepository.GetSongByIdAsync(entity.Id);
-            return ServiceResponse.Success($"Пісня '{entity.Title}' успішно додана", created ?? entity);
+            var created = await GetSongDtos()
+                .FirstOrDefaultAsync(s => s.Id == entity.Id);
+
+            return ServiceResponse.Success(
+                $"Пісня '{entity.Title}' успішно додана",
+                created ?? new SongDto
+                {
+                    Id = entity.Id,
+                    Title = entity.Title,
+                    ArtistId = entity.ArtistId,
+                    AlbumId = entity.AlbumId,
+                    Duration = entity.Duration,
+                    AudioUrl = entity.AudioUrl,
+                    CreatedAt = entity.CreatedAt
+                });
         }
 
         public async Task<ServiceResponse> UpdateAsync(Song entity, IEnumerable<int>? genreIds = null)
@@ -126,8 +141,21 @@ namespace SPR_411_Team_1.BLL.Services
                 await UpdateGenresAsync(entity.Id, genreIds);
             }
 
-            var updated = await _songRepository.GetSongByIdAsync(entity.Id);
-            return ServiceResponse.Success($"Пісня '{oldTitle}' успішно змінена", updated ?? current);
+            var updated = await GetSongDtos()
+                .FirstOrDefaultAsync(s => s.Id == entity.Id);
+
+            return ServiceResponse.Success(
+                $"Пісня '{oldTitle}' успішно змінена",
+                updated ?? new SongDto
+                {
+                    Id = current.Id,
+                    Title = current.Title,
+                    ArtistId = current.ArtistId,
+                    AlbumId = current.AlbumId,
+                    Duration = current.Duration,
+                    AudioUrl = current.AudioUrl,
+                    CreatedAt = current.CreatedAt
+                });
         }
 
         public async Task<ServiceResponse> DeleteAsync(int id)
@@ -147,6 +175,38 @@ namespace SPR_411_Team_1.BLL.Services
             }
 
             return ServiceResponse.Success($"Пісня '{entity.Title}' успішно видалена");
+        }
+
+        private IQueryable<SongDto> GetSongDtos()
+        {
+            return _songRepository.Songs.Select(s => new SongDto
+            {
+                Id = s.Id,
+                Title = s.Title,
+                ArtistId = s.ArtistId,
+                AlbumId = s.AlbumId,
+                Duration = s.Duration,
+                AudioUrl = s.AudioUrl,
+                CreatedAt = s.CreatedAt,
+                Artist = new ArtistDto
+                {
+                    Id = s.Artist.Id,
+                    Name = s.Artist.Name,
+                    Bio = s.Artist.Bio,
+                    ImageUrl = s.Artist.ImageUrl
+                },
+                Album = new AlbumBriefDto
+                {
+                    Id = s.Album.Id,
+                    Title = s.Album.Title,
+                    CoverUrl = s.Album.CoverUrl
+                },
+                Genres = s.SongGenres.Select(sg => new GenreDto
+                {
+                    Id = sg.Genre.Id,
+                    Name = sg.Genre.Name
+                }).ToList()
+            });
         }
 
         private async Task<ServiceResponse> ValidateRelationsAsync(

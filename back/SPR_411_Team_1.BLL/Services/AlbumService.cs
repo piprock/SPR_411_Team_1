@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SPR_411_Team_1.BLL.Models;
 using SPR_411_Team_1.DAL.Data.Entities;
 using SPR_411_Team_1.DAL.Repositories;
 
@@ -17,7 +18,7 @@ namespace SPR_411_Team_1.BLL.Services
 
         public async Task<ServiceResponse> GetAllAsync()
         {
-            var entities = await _albumRepository.Albums
+            var entities = await GetAlbumDtos()
                 .ToListAsync();
 
             return ServiceResponse.Success("Список альбомів отримано", entities);
@@ -25,7 +26,8 @@ namespace SPR_411_Team_1.BLL.Services
 
         public async Task<ServiceResponse> GetByIdAsync(int id)
         {
-            var entity = await _albumRepository.GetAlbumByIdAsync(id);
+            var entity = await GetAlbumDtos()
+                .FirstOrDefaultAsync(a => a.Id == id);
 
             if (entity == null)
             {
@@ -56,7 +58,19 @@ namespace SPR_411_Team_1.BLL.Services
                 return ServiceResponse.Error("Не вдалося додати альбом");
             }
 
-            return ServiceResponse.Success($"Альбом '{entity.Title}' успішно доданий", entity);
+            var created = await GetAlbumDtos()
+                .FirstOrDefaultAsync(a => a.Id == entity.Id);
+
+            return ServiceResponse.Success(
+                $"Альбом '{entity.Title}' успішно доданий",
+                created ?? new AlbumDto
+                {
+                    Id = entity.Id,
+                    Title = entity.Title,
+                    ArtistId = entity.ArtistId,
+                    CoverUrl = entity.CoverUrl,
+                    CreatedAt = entity.CreatedAt
+                });
         }
 
         public async Task<ServiceResponse> UpdateAsync(Album entity)
@@ -92,7 +106,19 @@ namespace SPR_411_Team_1.BLL.Services
                 return ServiceResponse.Error("Не вдалося змінити альбом");
             }
 
-            return ServiceResponse.Success($"Альбом '{oldTitle}' успішно змінений", current);
+            var updated = await GetAlbumDtos()
+                .FirstOrDefaultAsync(a => a.Id == entity.Id);
+
+            return ServiceResponse.Success(
+                $"Альбом '{oldTitle}' успішно змінений",
+                updated ?? new AlbumDto
+                {
+                    Id = current.Id,
+                    Title = current.Title,
+                    ArtistId = current.ArtistId,
+                    CoverUrl = current.CoverUrl,
+                    CreatedAt = current.CreatedAt
+                });
         }
 
         public async Task<ServiceResponse> DeleteAsync(int id)
@@ -112,6 +138,33 @@ namespace SPR_411_Team_1.BLL.Services
             }
 
             return ServiceResponse.Success($"Альбом '{entity.Title}' успішно видалений");
+        }
+
+        private IQueryable<AlbumDto> GetAlbumDtos()
+        {
+            return _albumRepository.Albums.Select(a => new AlbumDto
+            {
+                Id = a.Id,
+                Title = a.Title,
+                ArtistId = a.ArtistId,
+                CoverUrl = a.CoverUrl,
+                CreatedAt = a.CreatedAt,
+                Artist = new ArtistDto
+                {
+                    Id = a.Artist.Id,
+                    Name = a.Artist.Name,
+                    Bio = a.Artist.Bio,
+                    ImageUrl = a.Artist.ImageUrl
+                },
+                Songs = a.Songs.Select(s => new SongBriefDto
+                {
+                    Id = s.Id,
+                    Title = s.Title,
+                    ArtistId = s.ArtistId,
+                    AlbumId = s.AlbumId,
+                    Duration = s.Duration
+                }).ToList()
+            });
         }
     }
 }
