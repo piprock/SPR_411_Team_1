@@ -1,6 +1,4 @@
-using System;
-
-namespace SPR_411_Team_1.BLL.Models
+namespace SPR_411_Team_1.BLL.DTOs.Song
 {
     public class SongBriefDto
     {

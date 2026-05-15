@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
+using SPR_411_Team_1.BLL.DTOs.Artist;
+using SPR_411_Team_1.BLL.DTOs.Song;
 
-namespace SPR_411_Team_1.BLL.Models
+namespace SPR_411_Team_1.BLL.DTOs.Album
 {
     public class AlbumDto
     {

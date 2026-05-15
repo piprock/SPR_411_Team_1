@@ -1,4 +1,7 @@
-namespace SPR_411_Team_1.BLL.Models
+using SPR_411_Team_1.BLL.DTOs.Genre;
+using SPR_411_Team_1.BLL.DTOs.Song;
+
+namespace SPR_411_Team_1.BLL.DTOs.SongGenre
 {
     public class SongGenreDto
     {

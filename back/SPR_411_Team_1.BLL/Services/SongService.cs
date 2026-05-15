@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using SPR_411_Team_1.BLL.Models;
+using SPR_411_Team_1.BLL.DTOs.Album;
+using SPR_411_Team_1.BLL.DTOs.Artist;
+using SPR_411_Team_1.BLL.DTOs.Genre;
+using SPR_411_Team_1.BLL.DTOs.Song;
 using SPR_411_Team_1.DAL.Data.Entities;
 using SPR_411_Team_1.DAL.Repositories;
 
