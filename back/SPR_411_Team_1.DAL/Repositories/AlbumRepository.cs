@@ -16,6 +16,7 @@ namespace SPR_411_Team_1.DAL.Repositories
 
         public IQueryable<Album> Albums => _context.Albums
             .Include(a => a.Artist)
+            .Include(a => a.Songs)
             .AsNoTracking();
 
         public async Task<Album?> GetAlbumByIdAsync(int id)
