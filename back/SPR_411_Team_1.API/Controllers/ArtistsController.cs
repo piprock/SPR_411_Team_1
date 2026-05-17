@@ -57,5 +57,11 @@ namespace SPR_411_Team_1.API.Controllers
             var response = await _artistService.DeleteAsync(id);
             return this.GetResult(response);
         }
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchAsync([FromQuery] string query)
+        {
+            var response = await _artistService.SearchAsync(query);
+            return this.GetResult(response);
+        }
     }
 }

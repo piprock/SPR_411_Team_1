@@ -44,7 +44,7 @@ namespace SPR_411_Team_1.BLL.Services
 
             return ServiceResponse.Success("Артиста отримано", entity);
         }
-
+    
         public async Task<ServiceResponse> CreateAsync(Artist entity)
         {
             if (await _artistRepository.IsExistsAsync(entity.Name))
@@ -110,5 +110,13 @@ namespace SPR_411_Team_1.BLL.Services
 
             return ServiceResponse.Success($"Артист '{entity.Name}' успішно видалений");
         }
+        public async Task<ServiceResponse> SearchAsync(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query)){ return ServiceResponse.Error("Пошуковий запит не може бути порожнім"); }  
+                     
+            var entities = await _artistRepository.SearchByName(query.Trim()).OrderBy(a => a.Name).ToListAsync();
+            return ServiceResponse.Success("Артисти знайдені", entities);
+        }
+
     }
 }
