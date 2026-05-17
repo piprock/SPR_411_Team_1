@@ -34,5 +34,9 @@ namespace SPR_411_Team_1.DAL.Repositories
                 .AnyAsync(a => a.Name.ToLower() == name.ToLower()
                     && !exceptionIds.Contains(a.Id));
         }
+        public IQueryable<Artist> SearchByName(string query)
+        {
+            return _context.Artists.Where(a => EF.Functions.ILike(a.Name, $"%{query}%"));
+        }
     }
 }

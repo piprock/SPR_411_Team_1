@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import { api } from './api'
 import AlbumsPage from './pages/albums/AlbumsPage'
+import ArtistSearch from './pages/artists/ArtistSearch'
 
 function App() {
   const [genres, setGenres] = useState([])
@@ -21,6 +22,7 @@ function App() {
         ))}
       </ul>
       <AlbumsPage />
+      <ArtistSearch />
     </>
   )
 }
