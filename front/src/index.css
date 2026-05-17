@@ -1,0 +1,15 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+}
+
+body {
+  min-width: 320px;
+  font-family:
+    Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}

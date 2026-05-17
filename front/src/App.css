@@ -1,4 +1,110 @@
 #root {
-  margin: 0 auto;
-  padding: 2rem;
+  min-height: 100vh;
+}
+
+.albums-page {
+  min-height: 100vh;
+  padding: 32px;
+  background:
+    radial-gradient(circle at top right, rgba(220, 90, 150, 0.16), transparent 32%),
+    #111214;
+  color: #f4f4f5;
+}
+
+.albums-header {
+  margin-bottom: 24px;
+}
+
+.albums-header p {
+  margin: 0 0 6px;
+  color: #a1a1aa;
+  font-size: 14px;
+}
+
+.albums-header h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.albums-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.album-card {
+  overflow: hidden;
+  border: 1px solid #2b2d31;
+  border-radius: 8px;
+  background: #1b1c20;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.album-card:hover {
+  transform: translateY(-4px);
+  border-color: #f472b6;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.album-cover {
+  display: grid;
+  width: 100%;
+  aspect-ratio: 1;
+  place-items: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #33343a, #1f2024);
+  color: #f472b6;
+  font-size: 72px;
+  font-weight: 700;
+}
+
+.album-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* інверсія кольорів на фото*/
+  filter: invert(100%) sepia(100%) grayscale(100%) brightness(80%) contrast(120%);
+}
+
+
+.album-content {
+  padding: 16px;
+}
+
+.album-content h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.album-content p {
+  margin: 0 0 12px;
+  color: #d4d4d8;
+}
+
+.album-content span {
+  color: #a1a1aa;
+  font-size: 14px;
+}
+
+.albums-state {
+  margin: 0;
+  color: #d4d4d8;
+}
+
+.albums-state.error {
+  color: #fda4af;
+}
+
+@media (max-width: 640px) {
+  .albums-page {
+    padding: 20px;
+  }
+
+  .albums-header h1 {
+    font-size: 28px;
+  }
 }
