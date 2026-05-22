@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
+import { api } from './api'
+import AlbumsPage from './pages/albums/AlbumsPage'
+import ArtistSearch from './pages/artists/ArtistSearch'
 
 const initialSongs = [
   { id: 1, title: 'Blinding Lights', artist: 'The Weeknd', genre: 'Pop' },
@@ -110,7 +114,10 @@ function App() {
               </article>
             ))}
           </div>
-        </section>
+          </section>
+
+        <AlbumsPage />
+        <ArtistSearch />
       </div>
     </main>
   )
