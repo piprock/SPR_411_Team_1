@@ -81,6 +81,8 @@ function App() {
       </aside>
 
       <div className="content">
+        <ArtistSearch onSelectArtist={setSelectedArtist} />
+
         <section className="hero-panel">
           <p className="section-label">Now browsing</p>
           <h1>{selectedArtist || 'No artist selected'}</h1>
@@ -136,7 +138,6 @@ function App() {
           </section>
 
         <AlbumsPage />
-        <ArtistSearch />
       </div>
     </main>
   )

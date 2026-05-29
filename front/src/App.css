@@ -423,10 +423,23 @@ h1 {
 }
 
 .artist-card {
+  display: block;
+  width: 100%;
   border: 1px solid #2b2d31;
   border-radius: 8px;
   background: #1b1c20;
   padding: 16px;
+  color: #f4f4f5;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.artist-card:hover {
+  border-color: #f472b6;
+  background: #24262b;
+  transform: translateY(-2px);
 }
 
 .artist-card h2 {

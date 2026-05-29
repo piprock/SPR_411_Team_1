@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { api } from "../../api";
 
-export default function ArtistSearch() {
+export default function ArtistSearch({ onSelectArtist }) {
   const [query, setQuery] = useState("");
   const [artists, setArtists] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -66,10 +66,15 @@ export default function ArtistSearch() {
       {!loading && artists.length > 0 && (
         <div className="artist-results">
           {artists.map((artist) => (
-            <article className="artist-card" key={artist.id}>
+            <button
+              className="artist-card"
+              key={artist.id}
+              type="button"
+              onClick={() => onSelectArtist?.(artist.name)}
+            >
               <h2>{artist.name}</h2>
               <p>{artist.bio || "Опис відсутній."}</p>
-            </article>
+            </button>
           ))}
         </div>
       )}
