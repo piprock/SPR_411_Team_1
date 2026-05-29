@@ -1,33 +1,36 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useEffect, useState } from 'react'
 import './App.css'
 import { api } from './api'
 import AlbumsPage from './pages/albums/AlbumsPage'
 import ArtistSearch from './pages/artists/ArtistSearch'
 
-const initialSongs = [
-  { id: 1, title: 'Blinding Lights', artist: 'The Weeknd', genre: 'Pop' },
-  { id: 2, title: 'Save Your Tears', artist: 'The Weeknd', genre: 'Pop' },
-  { id: 3, title: 'Shape of You', artist: 'Ed Sheeran', genre: 'Pop' },
-  { id: 4, title: 'Perfect', artist: 'Ed Sheeran', genre: 'Ballad' },
-  { id: 5, title: 'Bad Guy', artist: 'Billie Eilish', genre: 'Alternative' },
-  { id: 6, title: 'Lovely', artist: 'Billie Eilish', genre: 'Alternative' },
-  { id: 7, title: 'Believer', artist: 'Imagine Dragons', genre: 'Rock' },
-  { id: 8, title: 'Thunder', artist: 'Imagine Dragons', genre: 'Rock' },
-  { id: 9, title: 'Levitating', artist: 'Dua Lipa', genre: 'Dance' },
-  { id: 10, title: "Don't Start Now", artist: 'Dua Lipa', genre: 'Dance' },
-]
-
 function App() {
   const [songs, setSongs] = useState([])
   const [selectedArtist, setSelectedArtist] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    setSongs(initialSongs)
+    const loadSongs = async () => {
+      setLoading(true)
+      setError('')
+
+      try {
+        const response = await api.get('songs')
+        setSongs(response.data?.payload ?? [])
+      } catch {
+        setSongs([])
+        setError('Не вдалося завантажити пісні з API.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadSongs()
   }, [])
 
   const artists = useMemo(() => {
-    return [...new Set(songs.map((song) => song.artist))].sort()
+    return [...new Set(songs.map((song) => song.artist?.name).filter(Boolean))].sort()
   }, [songs])
 
   useEffect(() => {
@@ -37,19 +40,23 @@ function App() {
   }, [artists, selectedArtist])
 
   const selectedSongs = useMemo(() => {
-    return songs.filter((song) => song.artist === selectedArtist)
+    return songs.filter((song) => song.artist?.name === selectedArtist)
   }, [songs, selectedArtist])
 
   const genres = useMemo(() => {
     return songs.reduce((items, song) => {
-      const current = items.find((item) => item.name === song.genre)
+      song.genres.forEach((genre) => {
+        const current = items.find((item) => item.name === genre.name)
 
-      if (current) {
-        current.count += 1
-        return items
-      }
+        if (current) {
+          current.count += 1
+          return
+        }
 
-      return [...items, { name: song.genre, count: 1 }]
+        items.push({ name: genre.name, count: 1 })
+      })
+
+      return items
     }, []).sort((a, b) => a.name.localeCompare(b.name))
   }, [songs])
 
@@ -76,8 +83,12 @@ function App() {
       <div className="content">
         <section className="hero-panel">
           <p className="section-label">Now browsing</p>
-          <h1>{selectedArtist}</h1>
-          <p className="hero-text">{selectedSongs.length} songs in this artist playlist</p>
+          <h1>{selectedArtist || 'No artist selected'}</h1>
+          <p className="hero-text">
+            {loading
+              ? 'Loading songs from API...'
+              : error || `${selectedSongs.length} songs in this artist playlist`}
+          </p>
         </section>
 
         <section className="songs-panel">
@@ -86,18 +97,26 @@ function App() {
             <span>{songs.length} tracks loaded</span>
           </div>
 
-          <div className="songs-list">
-            {selectedSongs.map((song) => (
-              <article className="song-row" key={song.id}>
-                <span className="song-number">{song.id}</span>
-                <div>
-                  <h3>{song.title}</h3>
-                  <p>{song.artist}</p>
-                </div>
-                <strong>{song.genre}</strong>
-              </article>
-            ))}
-          </div>
+          {loading && <p className="songs-state">Loading songs...</p>}
+          {!loading && error && <p className="songs-state error">{error}</p>}
+          {!loading && !error && selectedSongs.length === 0 && (
+            <p className="songs-state">No songs found for the selected artist.</p>
+          )}
+
+          {!loading && !error && selectedSongs.length > 0 && (
+            <div className="songs-list">
+              {selectedSongs.map((song) => (
+                <article className="song-row" key={song.id}>
+                  <span className="song-number">{song.id}</span>
+                  <div>
+                    <h3>{song.title}</h3>
+                    <p>{song.artist?.name}</p>
+                  </div>
+                  <strong>{song.genres.map((genre) => genre.name).join(', ') || 'No genre'}</strong>
+                </article>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="genres-panel">
